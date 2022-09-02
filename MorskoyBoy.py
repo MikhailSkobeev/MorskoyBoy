@@ -31,7 +31,7 @@ class Board(object):
         self.radar = [[Cell.empty_cell for _ in range(size)] for _ in range(size)]
         self.weight = [[1 for _ in range(size)] for _ in range(size)]
 
-    def get_field_part(self, element):
+    def get_board_part(self, element):
         if element == BoardPart.main:
             return self.map
         if element == BoardPart.radar:
@@ -42,7 +42,7 @@ class Board(object):
 
     def draw_field(self, element):
 
-        field = self.get_field_part(element)
+        board = self.get_board_part(element)
         weights = self.get_max_weight_cells()
 
         if element == BoardPart.weight:
@@ -50,12 +50,12 @@ class Board(object):
                 for y in range(self.size):
                     if (x, y) in weights:
                         print(end='')
-                    if field[x][y] < self.size:
+                    if board[x][y] < self.size:
                         print(" ", end='')
-                    if field[x][y] == 0:
+                    if board[x][y] == 0:
                         print(str("" + ". " + ""), end='')
                     else:
-                        print(str("" + str(field[x][y]) + " "), end='')
+                        print(str("" + str(board[x][y]) + " "), end='')
                     print(end='')
                 print()
 
@@ -72,7 +72,7 @@ class Board(object):
                     if x >= 0 and y == -1:
                         print(Game.letters[x], end='')
                         continue
-                    print(" " + str(field[x][y]), end='')
+                    print(" " + str(board[x][y]), end='')
                 print("")
         print("")
 
@@ -81,7 +81,7 @@ class Board(object):
     # False будет возвращаться, если не помещается корабль, и True, если корабль помещается
     def check_ship_fits(self, ship, element):
 
-        field = self.get_field_part(element)
+        board = self.get_board_part(element)
 
         if ship.x + ship.height - 1 >= self.size or ship.x < 0 or \
                 ship.y + ship.width - 1 >= self.size or ship.y < 0:
@@ -94,14 +94,14 @@ class Board(object):
 
         for c_x in range(x, x + height):
             for c_y in range(y, y + width):
-                if str(field[c_x][c_y]) == Cell.miss_cell:
+                if str(board[c_x][c_y]) == Cell.miss_cell:
                     return False
 
         for c_x in range(x - 1, x + height + 1):
             for c_y in range(y - 1, y + width + 1):
-                if c_x < 0 or c_x >= len(field) or c_y < 0 or c_y >= len(field):
+                if c_x < 0 or c_x >= len(board) or c_y < 0 or c_y >= len(board):
                     continue
-                if str(field[c_x][c_y]) in (Cell.ship_cell, Cell.destroyed_ship):
+                if str(board[c_x][c_y]) in (Cell.ship_cell, Cell.destroyed_ship):
                     return False
 
         return True
@@ -109,32 +109,32 @@ class Board(object):
     # Когда корабль уничтожен необходимо пометить все клетки вокруг него сыграными (Cell.miss_cell), а все клетки корабля - уничтожеными (Cell.destroyed_ship)
     def mark_destroyed_ship(self, ship, element):
 
-        field = self.get_field_part(element)
+        board = self.get_board_part(element)
 
         x, y = ship.x, ship.y
         width, height = ship.width, ship.height
 
         for c_x in range(x - 1, x + height + 1):
             for c_y in range(y - 1, y + width + 1):
-                if c_x < 0 or c_x >= len(field) or c_y < 0 or c_y >= len(field):
+                if c_x < 0 or c_x >= len(board) or c_y < 0 or c_y >= len(board):
                     continue
-                field[c_x][c_y] = Cell.miss_cell
+                board[c_x][c_y] = Cell.miss_cell
 
         for c_x in range(x, x + height):
             for c_y in range(y, y + width):
-                field[c_x][c_y] = Cell.destroyed_ship
+                board[c_x][c_y] = Cell.destroyed_ship
 
 # Добавление корабля: пробегаемся от позиции х у корабля по его высоте и ширине и помечаем на поле эти клетки
     def add_ship_to_field(self, ship, element):
 
-        field = self.get_field_part(element)
+        board = self.get_board_part(element)
 
         x, y = ship.x, ship.y
         width, height = ship.width, ship.height
 # Благодаря, ссылке на корабль при дальнейшем, обращение мы будем знать здоровье корабль
         for c_x in range(x, x + height):
             for c_y in range(y, y + width):
-                field[c_x][c_y] = ship
+                board[c_x][c_y] = ship
 
 # Функция возвращает список координат с самым большим коэффициентом шанса попадания
     def get_max_weight_cells(self):
