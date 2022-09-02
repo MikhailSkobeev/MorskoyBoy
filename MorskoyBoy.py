@@ -23,7 +23,7 @@ class Cell(object):
 
 #-----------------------------------------------------------
 
-class Field(object):
+class Board(object):
 
     def __init__(self, size):
         self.size = size
@@ -234,7 +234,7 @@ class Game(object):
 
 # При добавлении игрока создаем для него поле
     def add_player(self, player):
-        player.field = Field(Game.field_size)
+        player.field = Board(Game.field_size)
         player.enemy_ships = list(Game.ships_rules)
         self.ships_setup(player)
         # высчитываем вес для клеток поля, это нужно будет только для ИИ
