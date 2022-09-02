@@ -296,7 +296,7 @@ class Game(object):
         for line in self.current_player.message:
             print(line)
 
-# В этой функции прописана смена игроков
+# В этом методе прописана смена игроков
     def switch_players(self):
         self.current_player, self.next_player = self.next_player, self.current_player
 
